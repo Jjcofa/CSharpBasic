@@ -28,4 +28,7 @@ switch (oper)
         result = numOne / numTwo;
         Console.WriteLine($"{result}");
         break;
+    default:
+        Console.WriteLine("Неверный оператор!");
+        break;
 }
