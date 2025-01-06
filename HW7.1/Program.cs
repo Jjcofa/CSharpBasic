@@ -1,78 +1,115 @@
-﻿char[] gameBoard = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+﻿char[,] gameBoard = {
+    { '1', '2', '3' },
+    { '4', '5', '6' },
+    { '7', '8', '9' }
+};
+
 char player = 'X';
 bool gameRun = true;
 
 while (gameRun)
 {
     Console.Clear();
-    Console.WriteLine(" ");
-    Console.WriteLine($" {gameBoard[0]} | {gameBoard[1]} | {gameBoard[2]} ");
-    Console.WriteLine("-----------");
-    Console.WriteLine($" {gameBoard[3]} | {gameBoard[4]} | {gameBoard[5]} ");
-    Console.WriteLine("-----------");
-    Console.WriteLine($" {gameBoard[6]} | {gameBoard[7]} | {gameBoard[8]} ");
-    Console.WriteLine(" ");
 
-    Console.WriteLine($"Ход игрока {player} (1-9)");
+    for (int i = 0; i < 3; i++)
+    {
+        Console.WriteLine($" {gameBoard[i, 0]} | {gameBoard[i, 1]} | {gameBoard[i, 2]} ");
+        if (i < 2) Console.WriteLine("-----------");
+    }
+
+    Console.WriteLine($"Ход игрока {player} (1-9):");
     string input = Console.ReadLine();
 
-    if (int.TryParse(input, out int move) && move >= 1 && move <= 9 && gameBoard[move - 1] != 'X' && gameBoard[move - 1] != 'O')
+    if (int.TryParse(input, out int move) && move >= 1 && move <= 9)
     {
-        gameBoard[move - 1] = player;
+        int row = (move - 1) / 3;
+        int col = (move - 1) % 3;
 
-        int[,] winCombos= {
-                    { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 },
-                    { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 },
-                    { 0, 4, 8 }, { 2, 4, 6 }
-                };
-
-        bool win = false;
-        for (int i = 0; i < winCombos.GetLength(0); i++)
+        if (gameBoard[row, col] != 'X' && gameBoard[row, col] != 'O')
         {
-            if (gameBoard[winCombos[i, 0]] == gameBoard[winCombos[i, 1]] &&
-                gameBoard[winCombos[i, 1]] == gameBoard[winCombos[i, 2]])
+            gameBoard[row, col] = player;
+
+            bool win = false;
+
+            for (int r = 0; r < 3; r++)
+            {
+                if (gameBoard[r, 0] == player &&
+                    gameBoard[r, 1] == player &&
+                    gameBoard[r, 2] == player)
+                {
+                    win = true;
+                }
+            }
+
+            for (int c = 0; c < 3; c++)
+            {
+                if (gameBoard[0, c] == player &&
+                    gameBoard[1, c] == player &&
+                    gameBoard[2, c] == player)
+                {
+                    win = true;
+                }
+            }
+
+            if ((gameBoard[0, 0] == player && gameBoard[1, 1] == player && gameBoard[2, 2] == player) ||
+                (gameBoard[0, 2] == player && gameBoard[1, 1] == player && gameBoard[2, 0] == player))
             {
                 win = true;
             }
-        }
 
-        if (win)
-        {
-            Console.Clear();
-            Console.WriteLine(" ");
-            Console.WriteLine($" {gameBoard[0]} | {gameBoard[1]} | {gameBoard[2]} ");
-            Console.WriteLine("-----------");
-            Console.WriteLine($" {gameBoard[3]} | {gameBoard[4]} | {gameBoard[5]} ");
-            Console.WriteLine("-----------");
-            Console.WriteLine($" {gameBoard[6]} | {gameBoard[7]} | {gameBoard[8]} ");
-            Console.WriteLine(" ");
-            Console.WriteLine($"Игрок {player} выиграл!");
-            gameRun = false;
-        }
-        else if (Array.TrueForAll(gameBoard, c => c == 'X' || c == 'O'))
-        {
-            Console.Clear();
-            Console.WriteLine(" ");
-            Console.WriteLine($" {gameBoard[0]} | {gameBoard[1]} | {gameBoard[2]} ");
-            Console.WriteLine("-----------");
-            Console.WriteLine($" {gameBoard[3]} | {gameBoard[4]} | {gameBoard[5]} ");
-            Console.WriteLine("-----------");
-            Console.WriteLine($" {gameBoard[6]} | {gameBoard[7]} | {gameBoard[8]} ");
-            Console.WriteLine(" ");
-            Console.WriteLine("Ничья");
-            gameRun = false;
-        }
-        else
-        {
-            if (player == 'X')
+            if (win)
             {
-                player = 'O';
+                Console.Clear();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine($" {gameBoard[i, 0]} | {gameBoard[i, 1]} | {gameBoard[i, 2]} ");
+                    if (i < 2) Console.WriteLine("-----------");
+                }
+
+                Console.WriteLine($"Игрок {player} выиграл!");
+                gameRun = false;
             }
             else
             {
-                player = 'X';
+
+                bool isDraw = true;
+                for (int r = 0; r < 3; r++)
+                {
+                    for (int c = 0; c < 3; c++)
+                    {
+                        if (gameBoard[r, c] != 'X' && gameBoard[r, c] != 'O')
+                        {
+                            isDraw = false;
+                        }
+                    }
+                }
+
+                if (isDraw)
+                {
+                    Console.Clear();
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Console.WriteLine($" {gameBoard[i, 0]} | {gameBoard[i, 1]} | {gameBoard[i, 2]} ");
+                        if (i < 2) Console.WriteLine("-----------");
+                    }
+
+                    Console.WriteLine("Ничья");
+                    gameRun = false;
+                }
+                else
+                {
+                    if (player == 'X')
+                    {
+                        player = 'O';
+                    }
+                    else
+                    {
+                        player = 'X';
+                    }
+                }
             }
         }
     }
-
 }
